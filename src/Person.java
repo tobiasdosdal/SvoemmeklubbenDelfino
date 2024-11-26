@@ -1,4 +1,4 @@
-public abstract class Person
+apublic abstract class Person
 {
     protected String name;
     protected String email;
