@@ -22,6 +22,10 @@ public class Medlem extends Person {
         return medlemsId;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getAlder() {
         return alder;
     }

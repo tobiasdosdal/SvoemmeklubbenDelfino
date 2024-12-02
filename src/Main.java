@@ -3,140 +3,166 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Database db = new Database();
+    public static Scanner scanner = new Scanner(System.in);
+    public static Database db = new Database();
 
     public static void main(String[] args) {
         if (db.testConnection()) {
             System.out.println("Database forbindelse oprettet succesfuldt!");
-            boolean kørProgram = true;
+            boolean korProgram = true;
 
-            while (kørProgram) {
-                System.out.println("\n=== SVØMMEKLUBBEN DELFINEN ===");
-                System.out.println("1. Opret person");
-                System.out.println("2. Vis personer");
-                System.out.println("3. Afslut");
-                System.out.print("Vælg: ");
-
+            while (korProgram) {
+                System.out.println("\n=== SVOMMEKLUBBEN DELFINEN ===");
+                visHovedMenu();
                 String valg = scanner.nextLine();
 
                 switch (valg) {
-                    case "1" -> opretPerson();
-                    case "2" -> visPersoner();
-                    case "3" -> {
-                        kørProgram = false;
+                    case "1" -> medlemsAdministrationMenu();
+                    case "2" -> traenerAdministrationMenu();
+                    case "3" -> holdOgAktiviteterMenu();
+                    case "4" -> konkurrenceOgResultaterMenu();
+                    case "5" -> okonomiMenu();
+                    case "6" -> {
+                        korProgram = false;
                         db.closeConnection();
+                        System.out.println("Programmet afsluttes. Farvel!");
                     }
+                    default -> System.out.println("Ugyldigt valg. Prov igen.");
                 }
             }
         }
     }
 
-    private static void opretPerson() {
-        // Opret person
-        System.out.println("\nOPRET NY PERSON");
-        System.out.print("Navn: ");
-        String navn = scanner.nextLine();
-
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-
-        System.out.print("Telefon: ");
-        String telefon = scanner.nextLine();
-
-        System.out.print("Adresse: ");
-        String adresse = scanner.nextLine();
-
-        // Indsæt i person tabel
-        String insertPersonSQL = "INSERT INTO person (navn, email, telefon, adresse) VALUES (?, ?, ?, ?)";
-        db.executeUpdate(insertPersonSQL, navn, email, telefon, adresse);
-
-        // Hent det oprettede person ID
-        ResultSet rs = db.executeQuery("SELECT last_insert_rowid() as id");
-        try {
-            if (rs.next()) {
-                int personId = rs.getInt("id");
-
-                System.out.println("\nVælg type:");
-                System.out.println("1. Motionist");
-                System.out.println("2. Konkurrencesvømmer");
-                System.out.println("3. Træner");
-                System.out.print("Vælg (1-3): ");
-
-                switch (scanner.nextLine()) {
-                    case "1", "2" -> opretMedlem(personId, scanner.nextLine().equals("2"));
-                    case "3" -> opretTræner(personId);
-                    default -> System.out.println("Ugyldigt valg");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Fejl ved oprettelse: " + e.getMessage());
-        }
+    private static void visHovedMenu() {
+        System.out.println("1. Medlemsadministration");
+        System.out.println("2. Traeneradministration");
+        System.out.println("3. Hold og aktiviteter");
+        System.out.println("4. Konkurrence og resultater");
+        System.out.println("5. Okonomi");
+        System.out.println("6. Afslut");
+        System.out.print("Vaelg (1-6): ");
     }
 
-    private static void opretMedlem(int personId, boolean erKonkurrence) {
-        System.out.print("Alder: ");
-        int alder = Integer.parseInt(scanner.nextLine());
+    private static void medlemsAdministrationMenu() {
+        while (true) {
+            System.out.println("\n=== MEDLEMSADMINISTRATION ===");
+            System.out.println("1. Opret nyt medlem");
+            System.out.println("2. Rediger medlem (ikke kodet)");
+            System.out.println("3. Vis alle medlemmer");
+            System.out.println("4. Slet medlem (ikke kodet)");
+            System.out.println("5. Kontaktinformation (ikke kodet)1");
+            System.out.println("6. Tilbage til hovedmenu");
+            System.out.print("Vaelg (1-6): ");
 
-        String medlemstype = erKonkurrence ? "KONKURRENCE" : "MOTIONIST";
-        String insertMedlemSQL = "INSERT INTO medlem (person_id, alder, indmeldelsesdato, medlemstype) VALUES (?, ?, ?, ?)";
-        db.executeUpdate(insertMedlemSQL, personId, alder, LocalDate.now().toString(), medlemstype);
+            String valg = scanner.nextLine();
+            if (valg.equals("6")) break;
 
-        // Hvis det er en konkurrencesvømmer
-        if (erKonkurrence) {
-            ResultSet rs = db.executeQuery("SELECT last_insert_rowid() as id");
-            try {
-                if (rs.next()) {
-                    int medlemId = rs.getInt("id");
-                    System.out.print("Hold (Junior/Senior): ");
-                    String hold = scanner.nextLine().toUpperCase();
-                    String insertKonkurrenceSQL = "INSERT INTO konkurrencesvoemmer (medlem_id, hold) VALUES (?, ?)";
-                    db.executeUpdate(insertKonkurrenceSQL, medlemId, hold);
-                }
-            } catch (Exception e) {
-                System.out.println("Fejl ved oprettelse af konkurrencesvømmer");
+            switch (valg) {
+                case "1" -> Person.opretPerson();
+                //case "2" -> Person.redigerPerson();
+                case "3" -> Person.visPersoner();
+                //case "4" -> Person.sletPerson();
+                //case "5" -> Person.visKontaktinfo();
+                default -> System.out.println("Ugyldigt valg");
             }
         }
     }
 
-    private static void opretTræner(int personId) {
-        System.out.print("Certificeringer: ");
-        String cert = scanner.nextLine();
-        String insertTrænerSQL = "INSERT INTO traener (person_id, certificeringer) VALUES (?, ?)";
-        db.executeUpdate(insertTrænerSQL, personId, cert);
+    private static void traenerAdministrationMenu() {
+        while (true) {
+            System.out.println("\n=== TRAENERADMINISTRATION ===");
+            System.out.println("1. Opret traener");
+            System.out.println("2. Tildel traener til hold");
+            System.out.println("3. Vis traeneroversigt");
+            System.out.println("4. Certificeringer");
+            System.out.println("5. Tilbage til hovedmenu");
+            System.out.print("Vaelg (1-5): ");
+
+            String valg = scanner.nextLine();
+            if (valg.equals("5")) break;
+
+            switch (valg) {
+                case "1" -> traener.opretTraener();
+                //case "2" -> traener.tildelHold();
+                //case "3" -> traener.visTraenere();
+                //case "4" -> traener.administrerCertificeringer();
+                default -> System.out.println("Ugyldigt valg");
+            }
+        }
     }
 
-    private static void visPersoner() {
-        String sql = """
-            SELECT p.*, m.medlemstype, m.alder, t.certificeringer 
-            FROM person p 
-            LEFT JOIN medlem m ON p.id = m.person_id 
-            LEFT JOIN traener t ON p.id = t.person_id
-            """;
+    private static void holdOgAktiviteterMenu() {
+        while (true) {
+            System.out.println("\n=== HOLD OG AKTIVITETER ===");
+            System.out.println("1. Juniorhold");
+            System.out.println("2. Seniorhold");
+            System.out.println("3. Motionisthold");
+            System.out.println("4. Holdtilmelding");
+            System.out.println("5. Vis holdoversigt");
+            System.out.println("6. Tilbage til hovedmenu");
+            System.out.print("Vaelg (1-6): ");
 
-        ResultSet rs = db.executeQuery(sql);
-        try {
-            while (rs.next()) {
-                System.out.println("\nID: " + rs.getInt("id"));
-                System.out.println("Navn: " + rs.getString("navn"));
-                System.out.println("Email: " + rs.getString("email"));
-                System.out.println("Telefon: " + rs.getString("telefon"));
+            String valg = scanner.nextLine();
+            if (valg.equals("6")) break;
 
-                String medlemstype = rs.getString("medlemstype");
-                if (medlemstype != null) {
-                    System.out.println("Type: " + medlemstype);
-                    System.out.println("Alder: " + rs.getInt("alder"));
-                }
-
-                String cert = rs.getString("certificeringer");
-                if (cert != null) {
-                    System.out.println("Type: TRÆNER");
-                    System.out.println("Certificeringer: " + cert);
-                }
-                System.out.println("---------------");
+            switch (valg) {
+                //case "1" -> Hold.administrerJuniorhold();
+                //case "2" -> Hold.administrerSeniorhold();
+                //case "3" -> Hold.administrerMotionisthold();
+                //case "4" -> Hold.tilmeldHold();
+                //case "5" -> Hold.visHoldoversigt();
+                default -> System.out.println("Ugyldigt valg");
             }
-        } catch (Exception e) {
-            System.out.println("Fejl ved visning af personer: " + e.getMessage());
+        }
+    }
+
+    private static void konkurrenceOgResultaterMenu() {
+        while (true) {
+            System.out.println("\n=== KONKURRENCE OG RESULTATER ===");
+            System.out.println("1. Registrer konkurrencesvommer");
+            System.out.println("2. Tilmeld staevne");
+            System.out.println("3. Registrer staevneresultater");
+            System.out.println("4. Vis top 5 svommere");
+            System.out.println("5. Staevneoversigt");
+            System.out.println("6. Tilbage til hovedmenu");
+            System.out.print("Vaelg (1-6): ");
+
+            String valg = scanner.nextLine();
+            if (valg.equals("6")) break;
+
+            switch (valg) {
+                //case "1" -> Konkurrence.registrerKonkurrencesvommer();
+                //case "2" -> Konkurrence.tilmeldStaevne();
+                //case "3" -> Konkurrence.registrerResultater();
+                //case "4" -> Konkurrence.visTop5();
+                //case "5" -> Konkurrence.visStaevner();
+                default -> System.out.println("Ugyldigt valg");
+            }
+        }
+    }
+
+    private static void okonomiMenu() {
+        while (true) {
+            System.out.println("\n=== OKONOMI ===");
+            System.out.println("1. Kontingentberegning");
+            System.out.println("2. Registrer betaling");
+            System.out.println("3. Vis restancer");
+            System.out.println("4. Kontingentsatser");
+            System.out.println("5. Okonomioversigt");
+            System.out.println("6. Tilbage til hovedmenu");
+            System.out.print("Vaelg (1-6): ");
+
+            String valg = scanner.nextLine();
+            if (valg.equals("6")) break;
+
+            switch (valg) {
+                //case "1" -> Okonomi.beregnKontingent();
+                //case "2" -> Okonomi.registrerBetaling();
+                //case "3" -> Okonomi.visRestancer();
+                //case "4" -> Okonomi.visKontingentsatser();
+                //case "5" -> Okonomi.visOkonomioversigt();
+                default -> System.out.println("Ugyldigt valg");
+            }
         }
     }
 }
