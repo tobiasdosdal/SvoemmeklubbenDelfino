@@ -191,15 +191,26 @@ public class Main {
             System.out.print("Vaelg (1-6): ");
 
             String valg = scanner.nextLine();
-            if (valg.equals("6")) break;  // Returnér til hovedmenu
+            if (valg.equals("6")) break;
 
-            // Alle funktioner er endnu ikke implementeret
             switch (valg) {
-                //case "1" -> Okonomi.beregnKontingent();
-                //case "2" -> Okonomi.registrerBetaling();
-                //case "3" -> Okonomi.visRestancer();
-                //case "4" -> Okonomi.visKontingentsatser();
-                //case "5" -> Okonomi.visOkonomioversigt();
+                case "1" -> Okonomi.beregnKontingent();
+                case "2" -> {
+                    System.out.println("Under udvikling - Registrer betaling");
+                    // Okonomi.registrerBetaling();
+                }
+                case "3" -> {
+                    System.out.println("Under udvikling - Vis restancer");
+                    // Okonomi.visRestancer();
+                }
+                case "4" -> {
+                    System.out.println("\nKontingentsatser:");
+                    System.out.println("Junior (under 18 år): 1000 kr/år");
+                    System.out.println("Senior (18+ år): 1600 kr/år");
+                    System.out.println("Senior (60+ år): 1200 kr/år (25% rabat)");
+                    System.out.println("Passivt medlemskab: 500 kr/år");
+                }
+                case "5" -> Okonomi.beregnSamletKontingent();
                 default -> System.out.println("Ugyldigt valg");
             }
         }
