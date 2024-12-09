@@ -152,28 +152,28 @@ public class Main {
     private static void konkurrenceOgResultaterMenu() {
         while (true) {
             System.out.println("\n=== KONKURRENCE OG RESULTATER ===");
-            System.out.println("1. Registrer konkurrencesvommer");
-            System.out.println("2. Tilmeld staevne");
-            System.out.println("3. Registrer staevneresultater");
-            System.out.println("4. Vis top 5 svommere");
-            System.out.println("5. Staevneoversigt");
+            System.out.println("1. Registrer konkurrencesvømmer - WIP");
+            System.out.println("2. Tilmeld stævne");
+            System.out.println("3. Registrer stævneresultater");
+            System.out.println("4. Vis top 5 svømmere");
+            System.out.println("5. Stævneoversigt");
             System.out.println("6. Tilbage til hovedmenu");
-            System.out.print("Vaelg (1-6): ");
+            System.out.print("Vælg (1-6): ");
 
             String valg = scanner.nextLine();
-            if (valg.equals("6")) break;  // Returnér til hovedmenu
+            if (valg.equals("6")) break;
 
-            // Alle funktioner er endnu ikke implementeret
             switch (valg) {
-                //case "1" -> Konkurrence.registrerKonkurrencesvommer();
-                //case "2" -> Konkurrence.tilmeldStaevne();
-                //case "3" -> Konkurrence.registrerResultater();
-                //case "4" -> Konkurrence.visTop5();
-                //case "5" -> Konkurrence.visStaevner();
+                case "1" -> System.out.println("Under udvikling - Registrer konkurrencesvømmer");
+                case "2" -> Staevne.tilmeldStaevne();
+                case "3" -> Resultat.registrerStaevneResultat();
+                case "4" -> Resultat.visTop5();
+                case "5" -> Staevne.visAktiveStaevner();
                 default -> System.out.println("Ugyldigt valg");
             }
         }
     }
+
 
     /**
      * Undermenu for økonomi
