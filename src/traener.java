@@ -1,6 +1,15 @@
 import java.sql.ResultSet;
 
+/**
+ * Klasse til håndtering af trænere i svømmeklubben.
+ * Indeholder funktionalitet til oprettelse og administration af trænere.
+ */
 public class traener {
+    /**
+     * Opretter en ny træner i systemet ved at indsamle personlige oplysninger
+     * og træner-specifikke detaljer fra brugeren.
+     * Opretter først en person-record og derefter en tilknyttet træner-record.
+     */
     public static void opretTraener() {
         // Opret person først
         System.out.println("\nOPRET NY TRAENER");
@@ -39,6 +48,11 @@ public class traener {
         }
     }
 
+    /**
+     * Opretter en træner-record for en eksisterende person i systemet.
+     *
+     * @param personId ID på den eksisterende person som skal oprettes som træner
+     */
     public static void opretTraener(int personId) {
         System.out.print("Certificeringer: ");
         String cert = Main.scanner.nextLine();
@@ -47,15 +61,26 @@ public class traener {
         System.out.println("Traener oprettet succesfuldt!");
     }
 
-    // Tilføj de andre metoder der kaldes i Main
+    /**
+     * Tildeler svømmere til trænerens hold.
+     * Bemærk: Denne metode er under udvikling.
+     */
     public static void tildelHold() {
         System.out.println("Under udvikling");
     }
 
+    /**
+     * Viser en oversigt over alle trænere i systemet.
+     * Bemærk: Denne metode er under udvikling.
+     */
     public static void visTraenere() {
         System.out.println("Under udvikling");
     }
 
+    /**
+     * Håndterer administration af træneres certificeringer.
+     * Bemærk: Denne metode er under udvikling.
+     */
     public static void administrerCertificeringer() {
         System.out.println("Under udvikling");
     }

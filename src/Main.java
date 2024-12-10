@@ -65,10 +65,10 @@ public class Main {
         while (true) {
             System.out.println("\n=== MEDLEMSADMINISTRATION ===");
             System.out.println("1. Opret nyt medlem");
-            System.out.println("2. Rediger medlem (ikke kodet)");
+            System.out.println("2. Rediger medlem (WIP)");
             System.out.println("3. Vis alle medlemmer");
-            System.out.println("4. Slet medlem (ikke kodet)");
-            System.out.println("5. Kontaktinformation (ikke kodet)");
+            System.out.println("4. Slet medlem (WIP)");
+            System.out.println("5. Kontaktinformation (WIP)");
             System.out.println("6. Tilbage til hovedmenu");
             System.out.print("Vaelg (1-6): ");
 
@@ -95,9 +95,9 @@ public class Main {
         while (true) {
             System.out.println("\n=== TRAENERADMINISTRATION ===");
             System.out.println("1. Opret traener");
-            System.out.println("2. Tildel traener til hold");
-            System.out.println("3. Vis traeneroversigt");
-            System.out.println("4. Certificeringer");
+            System.out.println("2. Tildel traener til hold(WIP)");
+            System.out.println("3. Vis traeneroversigt(WIP)");
+            System.out.println("4. Certificeringer(WIP)");
             System.out.println("5. Tilbage til hovedmenu");
             System.out.print("Vaelg (1-5): ");
 
@@ -122,24 +122,21 @@ public class Main {
     private static void holdOgAktiviteterMenu() {
         while (true) {
             System.out.println("\n=== HOLD OG AKTIVITETER ===");
-            System.out.println("1. Juniorhold");
-            System.out.println("2. Seniorhold");
-            System.out.println("3. Motionisthold");
-            System.out.println("4. Holdtilmelding");
-            System.out.println("5. Vis holdoversigt");
-            System.out.println("6. Tilbage til hovedmenu");
-            System.out.print("Vaelg (1-6): ");
+            System.out.println("1. Opret nyt hold");
+            System.out.println("2. Vis alle hold");
+            System.out.println("3. Tilmeld medlem til hold");
+            System.out.println("4. Fjern medlem fra hold");
+            System.out.println("5. Tilbage til hovedmenu");
+            System.out.print("Vælg (1-5): ");
 
             String valg = scanner.nextLine();
-            if (valg.equals("6")) break;  // Returnér til hovedmenu
+            if (valg.equals("5")) break;
 
-            // Alle funktioner er endnu ikke implementeret
             switch (valg) {
-                //case "1" -> Hold.administrerJuniorhold();
-                //case "2" -> Hold.administrerSeniorhold();
-                //case "3" -> Hold.administrerMotionisthold();
-                //case "4" -> Hold.tilmeldHold();
-                //case "5" -> Hold.visHoldoversigt();
+                case "1" -> Hold.opretHold();
+                case "2" -> Hold.visHold();
+                case "3" -> Hold.tilmeldMedlemTilHold();
+                case "4" -> System.out.println("Under udvikling");
                 default -> System.out.println("Ugyldigt valg");
             }
         }
@@ -152,7 +149,7 @@ public class Main {
     private static void konkurrenceOgResultaterMenu() {
         while (true) {
             System.out.println("\n=== KONKURRENCE OG RESULTATER ===");
-            System.out.println("1. Registrer konkurrencesvømmer - WIP");
+            System.out.println("1. Registrer konkurrencesvømmer(WIP)");
             System.out.println("2. Tilmeld stævne");
             System.out.println("3. Registrer stævneresultater");
             System.out.println("4. Vis top 5 svømmere");
@@ -183,8 +180,8 @@ public class Main {
         while (true) {
             System.out.println("\n=== OKONOMI ===");
             System.out.println("1. Kontingentberegning");
-            System.out.println("2. Registrer betaling");
-            System.out.println("3. Vis restancer");
+            System.out.println("2. Registrer betaling(WIP)");
+            System.out.println("3. Vis restancer(WIP)");
             System.out.println("4. Kontingentsatser");
             System.out.println("5. Okonomioversigt");
             System.out.println("6. Tilbage til hovedmenu");

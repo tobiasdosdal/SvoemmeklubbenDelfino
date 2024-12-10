@@ -3,16 +3,43 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Staevne klassen håndterer funktionalitet relateret til svømmestævner
+ * herunder oprettelse, tilmelding, og administration af stævner.
+ */
 public class Staevne {
+    /** Unik identifikator for stævnet */
     private int id;
+
+    /** Stævnets navn */
     private String navn;
+
+    /** Dato for afholdelse af stævnet */
     private Date dato;
+
+    /** Lokation hvor stævnet afholdes */
     private String lokation;
+
+    /** Array af svømmediscipliner ved stævnet */
     private String[] discipliner;
+
+    /** Indikerer om stævnet er åbent for tilmelding */
     private boolean erAabenForTilmelding;
+
+    /** Liste over tilmeldte deltagere */
     private ArrayList<String> deltagere;
+
+    /** Liste over stævneresultater */
     private List<String> resultater;
 
+    /**
+     * Opretter et nyt stævne med de angivne parametre
+     * @param navn Stævnets navn
+     * @param dato Dato for afholdelse
+     * @param lokation Hvor stævnet afholdes
+     * @param discipliner Array af svømmediscipliner
+     * @param erAabenForTilmelding Om stævnet er åbent for tilmelding
+     */
     public Staevne(String navn, Date dato, String lokation, String[] discipliner, boolean erAabenForTilmelding) {
         this.navn = navn;
         this.dato = dato;
@@ -23,6 +50,11 @@ public class Staevne {
         this.resultater = new ArrayList<>();
     }
 
+    /**
+     * Opretter et nyt stævne i systemet baseret på brugerinput
+     * Indlæser navn, lokation og discipliner fra brugeren
+     * og gemmer stævnet i databasen
+     */
     public static void opretStaevne() {
         try {
             System.out.println("\nOPRET NYT STAEVNE");
@@ -45,6 +77,11 @@ public class Staevne {
         }
     }
 
+    /**
+     * Håndterer tilmelding af et medlem til et stævne
+     * Kontrollerer først om stævnet er åbent for tilmelding
+     * og tilmelder derefter medlemmet hvis muligt
+     */
     public static void tilmeldStaevne() {
         try {
             System.out.print("\nIndtast medlems-ID: ");
@@ -53,7 +90,6 @@ public class Staevne {
             System.out.print("Indtast stævne-ID: ");
             int staevneId = Integer.parseInt(Main.scanner.nextLine());
 
-            // Check om stævnet er åbent for tilmelding
             String checkSql = "SELECT er_aaben FROM staevne WHERE id = ?";
             ResultSet rs = Main.db.executeQuery(checkSql, staevneId);
 
@@ -69,6 +105,10 @@ public class Staevne {
         }
     }
 
+    /**
+     * Viser en oversigt over alle aktive stævner
+     * Inkluderer information om antal deltagere og tilmeldingsstatus
+     */
     public static void visAktiveStaevner() {
         String sql = """
             SELECT s.*, COUNT(sd.medlem_id) as antal_deltagere 
@@ -98,7 +138,10 @@ public class Staevne {
         }
     }
 
-    // Hjælpemetoder til at hente data fra databasen
+    /**
+     * Henter alle resultater for dette stævne fra databasen
+     * @return Liste af resultater formateret som strenge
+     */
     public List<String> getStaevneResultater() {
         List<String> resultater = new ArrayList<>();
         String sql = """
@@ -125,6 +168,10 @@ public class Staevne {
         return resultater;
     }
 
+    /**
+     * Returnerer en streng med komplet information om stævnet
+     * @return String med stævneinformation
+     */
     public String getStaevneInfo() {
         return "Navn: " + navn +
                 ", Dato: " + dato +
@@ -134,6 +181,10 @@ public class Staevne {
                 ", Åben for Tilmelding: " + erAabenForTilmelding;
     }
 
+    /**
+     * Tæller antal deltagere tilmeldt dette stævne
+     * @return Antal deltagere
+     */
     public int getAntalDeltagere() {
         String sql = "SELECT COUNT(*) as antal FROM staevne_deltagere WHERE staevne_id = ?";
         try {

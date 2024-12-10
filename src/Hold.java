@@ -1,65 +1,113 @@
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
+/**
+ * Hold klassen repræsenterer et svømmehold i klubben.
+ * Klassen håndterer holdadministration, herunder tilmelding af medlemmer,
+ * administration af træningstider og holdoversigter.
+ */
 public class Hold {
-    // attributer
-    private String holdNavn; //opret to objekter en til junior og en til senior
-    private String niveau;
-    private int maxAntalDeltagere;
-    // se note
-    private ArrayList<String> traeningsTider;
-    // tilføjelse
-    private String holdinfo;
-    private ArrayList<Medlem> holdliste;
-    //private ArrayList <Medlem> medlemArrayList; // ????????
+    /** Unik identifikator for holdet */
+    private int id;
 
-    // construktor
+    /** Holdets navn (junior eller senior) */
+    private String holdNavn;
+
+    /** Holdets niveau (f.eks. "Højt", "Elite") */
+    private String niveau;
+
+    /** Maksimalt antal deltagere på holdet */
+    private int maxAntalDeltagere;
+
+    /** Liste over holdets træningstider */
+    private ArrayList<String> traeningsTider;
+
+    /** Information om holdet */
+    private String holdinfo;
+
+    /** Liste over medlemmer på holdet */
+    private ArrayList<Medlem> holdliste;
+
+    /**
+     * Opretter et nyt hold med de angivne parametre
+     * @param holdNavn Holdets navn
+     * @param niveau Holdets niveau
+     * @param maxAntalDeltagere Maksimalt antal deltagere
+     * @param traeningsTider Liste over træningstider
+     */
     public Hold(String holdNavn, String niveau, int maxAntalDeltagere, ArrayList<String> traeningsTider) {
         this.holdNavn = holdNavn;
         this.niveau = niveau;
         this.maxAntalDeltagere = maxAntalDeltagere;
-        this.traeningsTider = traeningsTider; // forskel på denne??
-        this.holdliste = new ArrayList<>(); // og denne??
+        this.traeningsTider = traeningsTider;
+        this.holdliste = new ArrayList<>();
     }
 
+    /**
+     * @return Maksimalt antal deltagere på holdet
+     */
     public int getMaxAntalDeltagere() {
         return maxAntalDeltagere;
     }
 
+    /**
+     * @return Holdets navn
+     */
     public String getHoldNavn() {
         return holdNavn;
     }
 
+    /**
+     * @return Liste over holdets træningstider
+     */
     public ArrayList<String> getTraeningsTider() {
         return traeningsTider;
     }
 
+    /**
+     * @return Liste over medlemmer på holdet
+     */
     public ArrayList<Medlem> getHoldliste() {
         return holdliste;
     }
 
+    /**
+     * Returnerer en streng-repræsentation af holdet
+     * @return String med holdets information
+     */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(); //jeg bruger stringbuilder i stedet for '+' for at sparer på plads (+ et eller andet betyder java husker en masse strings forde strings er umitble/uændrebarelige)
-        sb.append(holdNavn).append("\n").append("Holdets træning foregår:\n").append(traeningsTider).append("har maks ").append(maxAntalDeltagere).append(" deltagere.").append("Holdet består af").append(holdliste);
+        StringBuilder sb = new StringBuilder();
+        sb.append(holdNavn).append("\n")
+                .append("Holdets træning foregår:\n")
+                .append(traeningsTider)
+                .append("har maks ")
+                .append(maxAntalDeltagere)
+                .append(" deltagere.")
+                .append("Holdet består af")
+                .append(holdliste);
         return sb.toString();
     }
 
+    /**
+     * @return Holdets information som string
+     */
     public String getHoldinfo() {
         return this.toString();
     }
 
-
-    public void addDeltager(Medlem medlem) { //der står 'Medlem medlem' fordi Medlem står i stedet for dataypen (string, int doubble etc)
-        //måske man skulle tilføje noget så inaktive ikke kan komme på holdet?
+    /**
+     * Tilføjer et medlem til holdet hvis der er plads og alderen passer til holdtypen
+     * @param medlem Medlemmet der skal tilføjes
+     */
+    public void addDeltager(Medlem medlem) {
         if (medlem.getAlder() < 18) {
             if (holdliste.size() < maxAntalDeltagere && holdNavn.contains("Juniorholdet")) {
                 holdliste.add(medlem);
-                System.out.println(medlem.getName() + " er tilmeldt til Juniorholdet"); //medlem har adgang til Persons navneattribut fordi medlem nedarver fra person (super navn og alt det der)
+                System.out.println(medlem.getName() + " er tilmeldt til Juniorholdet");
             } else {
                 System.out.println("Der er ikke plads på Juniorholdet.");
             }
-            // man bør heller ikke kunne tilføjes til holdet hvis man allerede er på holdet
-            // man bør heller ikke kunne tilføjes hvis man er for ung/gammel til holdet (automatisk tilfføjer en til det hold der passer ens alder)
         } else {
             if (holdliste.size() < maxAntalDeltagere && holdNavn.contains("Seniorholdet")) {
                 holdliste.add(medlem);
@@ -70,7 +118,10 @@ public class Hold {
         }
     }
 
-    // ret til man bør kun kunne komme på et hold hvis man passer ind så behøver ikke det med alder
+    /**
+     * Fjerner et medlem fra holdet
+     * @param medlem Medlemmet der skal fjernes
+     */
     public void removeDeltager(Medlem medlem) {
         if (medlem.getAlder() < 18 && holdNavn.contains("Juniorholdet") && holdliste.contains(medlem)) {
             holdliste.remove(medlem);
@@ -83,68 +134,107 @@ public class Hold {
         }
     }
 
+    /**
+     * Opretter et nyt hold i databasen med brugerinput
+     */
+    public static void opretHold() {
+        try {
+            System.out.println("\nOPRET NYT HOLD");
+            System.out.print("Holdnavn: ");
+            String holdNavn = Main.scanner.nextLine();
 
-    //tester
-// HUSK at slette mainmetoden nedenfor når jeg har testet at klassen virker som den skal (vi kører med en stor main hvor alle klasserne bliver kørt)
-    public static void main(String[] args) {
-        ArrayList<String> traeningtider = new ArrayList<>();
-        traeningtider.add("Tirsdag kl.16:00 - 18:00");
-        traeningtider.add("Torsdag kl.17:00 - 19:00");
+            System.out.print("Niveau: ");
+            String niveau = Main.scanner.nextLine();
 
+            System.out.print("Max antal deltagere: ");
+            int maxAntal = Integer.parseInt(Main.scanner.nextLine());
 
-        //De to hold (objekter)
-        Hold junior = new Hold("Juniorholdet", "Højt", 10, traeningtider);
-        //System.out.println(junior + "\n");
-        Hold senior = new Hold("Seniorholdet", "Elite", 7, traeningtider);
-        //System.out.println(senior + "\n");
+            String sql = "INSERT INTO hold (hold_navn, niveau, max_antal_deltagere) VALUES (?, ?, ?)";
+            Main.db.executeUpdate(sql, holdNavn, niveau, maxAntal);
 
+            ResultSet rs = Main.db.executeQuery("SELECT last_insert_rowid() as id");
+            if (rs.next()) {
+                int holdId = rs.getInt("id");
+                System.out.println("Indtast træningstider (tom linje når færdig):");
+                while (true) {
+                    String tid = Main.scanner.nextLine();
+                    if (tid.isEmpty()) break;
 
-        Medlem medlem1 = new Medlem("Camilla", "CamillaKanin@gmail.com", "35422144", "Borups Allé 22, 5. th.", 123, 22, true);
-        Medlem medlem2 = new Medlem("Tinke", "UlvepigenTinke@gmail.com", "23456789", "Fernandosgade 5B", 233, 15, true);
-        Medlem medlem3 = new Medlem("Majbrit", "Majbritprivatmail@gmail.com", "24949389", "Sjællandsgade 233K", 303, 12, false);
+                    sql = "INSERT INTO traenings_tider (hold_id, tid) VALUES (?, ?)";
+                    Main.db.executeUpdate(sql, holdId, tid);
+                }
+            }
+            System.out.println("Hold oprettet succesfuldt!");
+        } catch (Exception e) {
+            System.out.println("Fejl ved oprettelse af hold: " + e.getMessage());
+        }
+    }
 
-        System.out.println("Senior holdinfo: " + senior.getHoldinfo() + "\n");
-        System.out.println("Junior holdinfo: " + junior.getHoldinfo() + "\n");
+    /**
+     * Viser en oversigt over alle hold med deres information
+     */
+    public static void visHold() {
+        String sql = """
+            SELECT h.*, GROUP_CONCAT(t.tid) as tider,
+                   COUNT(DISTINCT hm.medlem_id) as antal_medlemmer
+            FROM hold h
+            LEFT JOIN traenings_tider t ON h.id = t.hold_id
+            LEFT JOIN hold_medlem hm ON h.id = hm.hold_id
+            GROUP BY h.id
+            """;
 
-        System.out.println("Junior holdliste: " + junior.getHoldliste() + "\n");
+        try {
+            ResultSet rs = Main.db.executeQuery(sql);
+            System.out.println("\nHoldoversigt:");
+            System.out.println("----------------------------------------");
 
-        System.out.println("forsøger at tilføje medlem 1,2 og 3 til juniorholdet - obs medlem 1 er 22år");
-        junior.addDeltager(medlem1);
-        junior.addDeltager(medlem2);
-        junior.addDeltager(medlem3);
+            while (rs.next()) {
+                System.out.printf("Hold: %s\n", rs.getString("hold_navn"));
+                System.out.printf("Niveau: %s\n", rs.getString("niveau"));
+                System.out.printf("Max antal: %d\n", rs.getInt("max_antal_deltagere"));
+                System.out.printf("Nuværende antal: %d\n", rs.getInt("antal_medlemmer"));
+                System.out.printf("Træningstider: %s\n", rs.getString("tider"));
+                System.out.println("----------------------------------------");
+            }
+        } catch (Exception e) {
+            System.out.println("Fejl ved visning af hold: " + e.getMessage());
+        }
+    }
 
-        System.out.println("Junior holdliste: " + junior.getHoldliste());
-        System.out.println("Senior holdliste: " + senior.getHoldliste());
+    /**
+     * Tilmelder et medlem til et specifikt hold hvis der er plads
+     */
+    public static void tilmeldMedlemTilHold() {
+        try {
+            System.out.print("\nIndtast medlem-ID: ");
+            int medlemId = Integer.parseInt(Main.scanner.nextLine());
 
-        System.out.println("forsøger at tilføje medlem1 til seniorholdet i stedet");
-        senior.addDeltager(medlem1);
+            System.out.print("Indtast hold-ID: ");
+            int holdId = Integer.parseInt(Main.scanner.nextLine());
 
-        System.out.println("senior holdliste: " + senior.getHoldliste());
+            String checkSql = """
+                SELECT h.max_antal_deltagere, COUNT(hm.medlem_id) as antal_medlemmer
+                FROM hold h
+                LEFT JOIN hold_medlem hm ON h.id = hm.hold_id
+                WHERE h.id = ?
+                GROUP BY h.id
+                """;
 
-        System.out.println("Junior holdliste: " + junior.getHoldliste());
-        System.out.println("fjerner medlem 2 fra juniorholdet");
-        junior.removeDeltager(medlem2);
+            ResultSet rs = Main.db.executeQuery(checkSql, holdId);
+            if (rs.next()) {
+                int maxAntal = rs.getInt("max_antal_deltagere");
+                int nuværendeAntal = rs.getInt("antal_medlemmer");
 
-        System.out.println(junior.getHoldliste());
-
-
-
+                if (nuværendeAntal < maxAntal) {
+                    String sql = "INSERT INTO hold_medlem (hold_id, medlem_id) VALUES (?, ?)";
+                    Main.db.executeUpdate(sql, holdId, medlemId);
+                    System.out.println("Medlem tilmeldt holdet!");
+                } else {
+                    System.out.println("Holdet er fuldt!");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Fejl ved tilmelding til hold: " + e.getMessage());
+        }
     }
 }
-
-
-
-/**
- // Note:
- // Der er to måder at initialisere en ArrayList på:
- // 1. Initialisering direkte i attributten (fx "private ArrayList<String> traeningsTider = new ArrayList<>();").
- //    - Fordel: Listen er altid klar (tom), så vi undgår null-pointer fejl.
- //    - Ulempe: Mindre fleksibelt, hvis vi vil tildele en specifik liste ved oprettelse.
- //
- // 2. Initialisering i konstruktøren (fx "this.traeningsTider = traeningsTider;").
- //    - Fordel: Vi kan give en liste som input, når objektet oprettes.
- //    - Ulempe: Vi skal sikre os, at input ikke er null. Hvis null gives, skal vi håndtere det (fx lave en tom liste).
- //
- // Ofte kombinerer man de to tilgange ved at sikre, at konstruktøren laver en tom liste, hvis input er null.
-
- */

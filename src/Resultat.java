@@ -1,14 +1,30 @@
 import java.sql.ResultSet;
 import java.util.Date;
 
+/**
+ * Klasse til håndtering af svømmeresultater.
+ * Håndterer registrering, visning og sammenligning af svømmetider.
+ */
 public class Resultat {
-    // Attributter
+    /** Svømmedisciplin (Butterfly/Crawl/Rygcrawl/Brystsvømning) */
     private String disciplin;
-    private double tid; // I sekunder
+
+    /** Tiden i sekunder */
+    private double tid;
+
+    /** Dato for resultatet */
     private Date dato;
+
+    /** Eventuelle kommentarer til resultatet */
     private String kommentar;
 
-    // Konstruktør
+    /**
+     * Opretter et nyt resultat
+     * @param disciplin Svømmedisciplinen
+     * @param tid Tiden i sekunder
+     * @param dato Datoen for resultatet
+     * @param kommentar Eventuelle kommentarer
+     */
     public Resultat(String disciplin, double tid, Date dato, String kommentar) {
         this.disciplin = disciplin;
         this.tid = tid;
@@ -16,12 +32,18 @@ public class Resultat {
         this.kommentar = kommentar;
     }
 
-    // Metode til at gemme resultat i database
+    /**
+     * Gemmer resultatet i databasen
+     * @param medlemId ID på det medlem resultatet tilhører
+     */
     public void gemResultat(int medlemId) {
         String sql = "INSERT INTO resultat (medlem_id, disciplin, tid, dato, kommentar) VALUES (?, ?, ?, ?, ?)";
         Main.db.executeUpdate(sql, medlemId, disciplin, tid, dato.toString(), kommentar);
     }
 
+    /**
+     * Viser de 5 hurtigste tider på tværs af alle discipliner
+     */
     public static void visTop5() {
         String sql = """
         SELECT p.navn, r.disciplin, r.tid, r.dato
@@ -49,6 +71,9 @@ public class Resultat {
         }
     }
 
+    /**
+     * Viser alle registrerede resultater sorteret efter dato
+     */
     public static void visAlleResultater() {
         String sql = """
         SELECT p.navn, r.disciplin, r.tid, r.dato, r.kommentar
@@ -76,7 +101,9 @@ public class Resultat {
         }
     }
 
-
+    /**
+     * Registrerer et nyt stævneresultat ved at indsamle information fra brugeren
+     */
     public static void registrerStaevneResultat() {
         try {
             System.out.print("\nIndtast medlems-ID: ");
@@ -103,15 +130,22 @@ public class Resultat {
         }
     }
 
-
-    // Metode til at opdatere resultatet
+    /**
+     * Opdaterer et eksisterende resultat med nye værdier
+     * @param nyTid Den nye tid i sekunder
+     * @param nyDato Den nye dato
+     * @param nyKommentar Den nye kommentar
+     */
     public void opdaterResultat(double nyTid, Date nyDato, String nyKommentar) {
         this.tid = nyTid;
         this.dato = nyDato;
         this.kommentar = nyKommentar;
     }
 
-    // Metode til at hente resultatinformation som string
+    /**
+     * Returnerer en streng med al information om resultatet
+     * @return String med resultatinformation
+     */
     public String getResultatInfo() {
         return "Disciplin: " + disciplin +
                 ", Tid: " + String.format("%.2f", tid) + " sek" +
@@ -119,7 +153,11 @@ public class Resultat {
                 ", Kommentar: " + kommentar;
     }
 
-    // Metode til at sammenligne tider
+    /**
+     * Sammenligner dette resultat med et andet resultat
+     * @param andetResultat Resultatet der sammenlignes med
+     * @return -1 hvis dette resultat er hurtigere, 1 hvis langsommere, 0 hvis ens
+     */
     public int sammenlignTid(Resultat andetResultat) {
         if (this.tid < andetResultat.tid) {
             return -1;  // Dette resultat er hurtigere
@@ -130,15 +168,23 @@ public class Resultat {
         }
     }
 
-    // Getters
+    /**
+     * @return Svømmedisciplinen
+     */
     public String getDisciplin() {
         return disciplin;
     }
 
+    /**
+     * @return Tiden i sekunder
+     */
     public double getTid() {
         return tid;
     }
 
+    /**
+     * @return Datoen for resultatet
+     */
     public Date getDato() {
         return dato;
     }
