@@ -1,5 +1,8 @@
 // Import af nødvendige biblioteker for database, dato og scanner funktionalitet
 import java.util.Scanner;
+import java.awt.Robot;
+import java.awt.AWTException;
+import java.awt.event.KeyEvent;
 
 /**
  * Hovedklassen for Svømmeklubben Delfinens administrationssystem.
